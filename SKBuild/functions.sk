@@ -1,0 +1,36 @@
+function menu(p:player,page:number):
+	set metadata tag "BLIST" of {_p} to chest inventory with 5 rows named "&3&lBuilder &7GUI"
+	set slot 0, 1, 2, 3, 4, 5, 6, and 7 of metadata tag "BLIST" of {_p} to gray stained glass pane named " "
+	set slot 8 of metadata tag "BLIST" of {_p} to barrier named "&cClose"
+	if {_page} > 1:
+		set slot 45 of metadata tag "BLIST" of {_p} to arrow named "&7Next Page"
+			#set {_y} to {_page} - 1
+			#reports({_p},{_r},{_y})
+	loop {build::list::*}:
+		set {_b} to (loop-index parsed as number) - (27*({_page}-1))+8
+		if ({_b}) is between 9 and 35:
+			set slot {_b} of metadata tag "BLIST" of {_p} to paper named "%loop-value%" with lore "", "&7Click to remove", and " "
+		if {_b} > 35:
+			set slot 53 of metadata tag "BLIST" of {_p} to arrow
+				#add 1 to {_page}
+				#menu({_p},{_page})
+			exit loop
+	open (metadata tag "BLIST" of {_p}) to {_p}
+		
+		
+		
+		
+on inventory click:
+	if event-inventory = (metadata tag "BLIST" of player):
+		cancel event
+		if index of event-slot is 8:
+			close player's inventory
+		if index of event-slot is 53:
+			add 1 to {_page}
+			menu(player,{_page})
+		set {_p} to event-item's name
+		if {_p} is set:
+			if index of event-slot is not 8 or 53:
+				if player has permission "builder.remove":
+					close player's inventory
+					make player say "/bremove %{_p}%"

@@ -1,0 +1,36 @@
+on join:
+	set join message to "&7[&a&l+&7] %player%"
+
+on quit:
+	set leave message to "&7[&c&l-&7] %player%"
+	
+options:
+	server: &3&lHorizon &7One
+	p: &3&lHorizon &8| &7
+	
+	
+on join:
+	if {joins::*} does not contain uuid of player:
+		add uuid of player to {joins::*}
+		set {report1.%player%} to 0
+		set {report2.%player%} to 0
+		wait 5 ticks
+		send "&a☒☒☒☒☒☒☒☒"
+		send "&a☒☒☒☒☒☒☒☒"
+		send "&a☒&8☐☐&a☒☒&8☐☐&a☒"
+		send "&a☒&8☐☐&a☒☒&8☐☐&a☒      &7Welcome to {@server}"
+		send "&a☒☒☒&8☐☐&a☒☒☒      &7Walk forward too see the available Roles"
+		send "&a☒☒&8☐☐☐☐&a☒☒      &7Do &c/help&7 for help"
+		send "&a☒☒&8☐☐☐☐&a☒☒"
+		send "&a☒☒&8☐&a☒☒&8☐&a☒☒"
+		send "&a☒☒☒☒☒☒☒☒"
+	else:
+		send action bar "{@p}Welcome Back" to player
+		
+		
+command resetjoins:
+	permission: joins.reset
+	permission message: &fUnknown command. Type &C/help&7 for help
+	trigger:
+		delete {joins::*}
+		send action bar "{@p}Joins reset" to player

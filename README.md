@@ -1,5 +1,6 @@
 # SKBuild
 A simple skript to have a community build server
+!!!NOT DONE BETA VERSON!!!
 
 Needed
   - Skript (Link: https://github.com/SkriptLang/Skript/releases)

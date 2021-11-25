@@ -14,3 +14,5 @@ How to Use
 3) Once the folder is in your skript folder so "/sk reload all"
 4) Full explanation with be out soon (idk what it will be on)
   
+  
+Discord --- Boxey#1326

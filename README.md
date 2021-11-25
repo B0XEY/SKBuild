@@ -10,7 +10,7 @@ Needed
 
 How to Use
 1) Download the folder
-2) Put the "city" folder in your skripts folder
+2) Put the "SKBuild" folder in your skripts folder
 3) Once the folder is in your skript folder so "/sk reload all"
 4) Full explanation with be out soon (idk what it will be on)
   

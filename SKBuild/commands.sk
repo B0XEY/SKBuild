@@ -1,0 +1,327 @@
+on damage:
+	if world of victim is "citymap":
+		if victim is a player:
+			cancel event
+
+on chat:
+	set the chat format to "%player's prefix%%player% &r➢ %message%"
+
+
+
+options:
+	p: &3&lHorizon &8| &7
+	command: /pex user %player% group set
+	world: citymap
+	
+	time: 5 minutes
+	
+	
+#CLEARLAG
+every {@time} in world "{@world}":
+	broadcast "{@p}Clearind droped items in 5 seconds"
+	wait 5 seconds
+	delete all dropped items in world "{@world}"
+	delete all mobs in world "{@world}"
+	broadcast "{@p}Cleared all"
+
+#SPAWN
+command spawn:
+	trigger:
+		teleport player to {spawn}
+		send action bar "{@p}Teleported to spawn" to player
+		
+		
+command setspawn:
+	permission: spawn.set
+	trigger:
+		set {spawn} to location of player
+		send action bar "{@p}Spawn set at &3%{spawn}%" to player
+		
+		
+#other world
+command setcityspawn:
+	permission: cspawn.set
+	trigger:
+		set {cityspawn} to location of player
+		send action bar "{@p}Spawn set at &3%{cityspawn}%" to player
+		
+		
+command setsurvivalspawn:
+	permission: sspawn.set
+	trigger:
+		set {survivalspawn} to location of player
+		send action bar "{@p}Spawn set at &3%{survivalspawn}%" to player
+
+
+#Sever Picker
+
+on right click:
+	name of player's tool = "&3&lServer &7Picker"
+	set metadata tag "PickGUI" of player to chest inventory with 1 rows named "&3&lServer &7Picker"
+	loop 9 times:
+		set slot (loop-value - 1) of metadata tag "PickGUI" of player to gray stained glass pane named " "
+		
+	set slot 3 of metadata tag "PickGUI" of player to glass named "&3&lCity" with lore " " and "&cClick to play!" and " "
+	set slot 5 of metadata tag "PickGUI" of player to grass block named "&3&lSurvival" with lore " " and "&cClick to play!" and " "
+	open (metadata tag "PickGUI" of player) to player
+
+
+
+
+on inventory click:
+	if event-inventory = (metadata tag "PickGUI" of player):
+		cancel event
+		if index of event-slot is 3:
+			send "{@p}Teleporting to the build world" to player
+			teleport player to {cityspawn}
+		if index of event-slot is 5:
+			send "{@p}Teleporting to the survival world" to player
+			teleport player to {survivalspawn}
+
+#ROLES
+
+command roles:
+	trigger:
+		if world of player is "{@world}":
+			set metadata tag "rolesGUI" of player to chest inventory with 1 rows named "&3&lRoles &7GUI"
+			loop 9 times:
+				set slot (loop-value - 1) of metadata tag "rolesGUI" of player to gray stained glass pane named " "
+		
+			set slot 0 of metadata tag "rolesGUI" of player to player's skull named "&a&l%Player%"
+		
+			#ROLES
+			set slot 3 of metadata tag "rolesGUI" of player to paper named "&7&lCitizen" with lore " " and "&7No building just viewing the city" and "&cClick to play!" and " "
+			set slot 5 of metadata tag "rolesGUI" of player to paper named "&d&lWorker" with lore " " and "&7A basic builder make roads and much more" and "&cClick to play!" and " "
+			set slot 7 of metadata tag "rolesGUI" of player to paper named "&6&lBuilder" with lore " " and "&7Work on larger buildings and get worldedit!" and "&cClick to play!" and " "
+		
+			send action bar "{@p}Opening roles GUI" to player
+			wait 1 ticks
+			open (metadata tag "rolesGUI" of player) to player
+		else:
+			send " "
+			send "{@p}Cant open GUI here"
+			send " "
+		
+		
+on inventory click:
+	if event-inventory = (metadata tag "rolesGUI" of player):
+		cancel event
+		if index of event-slot is 3:
+			#Viewr
+			set {viewer.%uuid of player%} to true
+			set {worker.%uuid of player%} to false
+			set {builder.%uuid of player%} to false
+			close player's inventory
+			send "{@p}You are now a &7&lCitizen"
+			execute console command "{@command} def"
+			set gamemode of player to adventure
+			if {fly.%player%} is false:
+				set {fly.%player%} to true
+				send " "
+				send "{@p}Flying is now &aOn"
+				send " "
+				set player's flight mode to true
+		if index of event-slot is 5:
+			#Worker
+			set {viewer.%uuid of player%} to false
+			set {worker.%uuid of player%} to true
+			set {builder.%uuid of player%} to false
+			close player's inventory
+			send "{@p}You are now a &d&lWorker"
+			execute console command "{@command} worker"
+			set gamemode of player to creative
+			if {fly.%player%} is false:
+				set {fly.%player%} to true
+				send " "
+				send "{@p}Flying is now &aOn"
+				send " "
+				set player's flight mode to true
+		if index of event-slot is 7:
+			#Builder
+			if {unlocked.%uuid of player%} is true:
+				set {viewer.%uuid of player%} to false
+				set {worker.%uuid of player%} to false
+				set {builder.%uuid of player%} to true
+				close player's inventory
+				send "{@p}You are now a &6&lBuilder"
+				execute console command "{@command} builder"
+				set gamemode of player to creative
+				if {fly.%player%} is false:
+					set {fly.%player%} to true
+					send " "
+					send "{@p}Flying is now &aOn"
+					send " "
+					set player's flight mode to true
+			else:
+				close player's inventory
+				make player say "/apply"
+				set gamemode of player to creative
+				execute console command "{@command} worker"
+				send "{@p}You are a &d&lWorker&7 until you get accepted"
+				if {fly.%player%} is false:
+					set {fly.%player%} to true
+					send " "
+					send "{@p}Flying is now &aOn"
+					send " "
+					set player's flight mode to true
+				
+				
+		
+		
+#FLY COMMAND		
+				
+command fly:
+	trigger:
+		if world of player is "{@world}":
+			if {fly.%player%} is true:
+				set {fly.%player%} to false
+				send " "
+				send "{@p}Flying is now &cOff"
+				send " "
+				set player's flight mode to false
+			else:
+				set {fly.%player%} to true
+				send " "
+				send "{@p}Flying is now &aOn"
+				send " "
+				set player's flight mode to true
+		else:
+			send " "
+			send "{@p}Cant do this here"
+			send " "
+			
+			
+#HELP COMMANDS
+
+command help:
+	aliases: /h
+	trigger:
+		send " "
+		send "&c1&8 | &7Get roles to do diffent things"
+		send "&c2&8 | &7worldedit come swith &cSOME&7 roles"
+		send "&c3&8 | &7/fly comes will &cALL&7 roles"
+		send " "
+		
+		
+command rules:
+	aliases: /rule, /r
+	trigger:
+		send ""
+		send "&c1&8 | &7Griefing is not allowed."
+		send "&c2&8 | &7No Trading For Real Items"
+		send "&c3&8 | &7Treat others with respect."
+		send "&c4&8 | &7Keep chat family friendly."
+		send "&c5&8 | &7Spamming is not allowed."
+		send ""
+			
+			
+			
+#REPORTS
+
+command /check <player>:
+	usage: /check <player>
+	permission: op
+	permission message: you are not admin
+	trigger:
+		send "&7===== &3&lREPORTS &7=====" to player
+		send "&c%arg 1% &7have been reported &c%{report1.%arg 1%}% &7times"
+		send "&c%arg 1% &7have reported other users &c%{report2.%arg 1%}% &7times"
+		
+command /report <player> <text>:
+	cooldown: 30 seconds
+	cooldown message: You need to wait &l%remaining time% &rto use this command again!
+	usage: /report <player> <reason>
+	trigger:
+		add 1 to {report1.%arg 1%}
+		add 1 to {report2.%player%}
+		send "&6Report sent to all staff online" to player
+		loop all players:
+			if loop-player have permission "op":
+				send "&7===== &3&lREPORT &7=====" to loop-player
+				send "&7Report by:&c %player%" to loop-player
+				send "&7Player reported:&c %arg 1%" to loop-player
+				send "&7Reason:&c %arg 2%" to loop-player
+				
+				
+				
+command clearreports <player>:
+	permission: op
+	trigger:
+		set {report1.%arg 1%} to 0
+		set {report2.%arg 1%} to 0
+		send "&7===== &3&lREPORT &7====="
+		send "&7Cleared %arg 1%&7 reports"
+
+
+#BUILDER STUFF
+			
+command apply:
+	trigger:
+		if world of player is "{@world}":
+			if {unlocked.%uuid of player%} is set:
+				send " "
+				send "{@p}You are already a builder"
+				send " "
+			else:
+				set {applying.%player%} to true
+				send "{@p}Appling for &6&lBuilder"
+				loop all players:
+					if loop-player has permission "build.view":
+						send "{@p}&c%player%&7 is appling for &6&lBuilder" to loop-player
+						send " " to loop-player
+						send "{@p}PLAYTIME: &c%pt_timeShortened({playtime::playerdata::playtime::%player's uuid%} ? 0 seconds)%" to loop-player
+						send "{@p}REPORTS: &c%{report1.%player%}%" to loop-player
+						send "{@p}REPORTED: &c%{report2.%player%}%" to loop-player
+						send " " to loop-player
+		else:
+			send " "
+			send "{@p}Cant apply here"
+			send " "
+				
+command baccept [<player>]:
+	permission: builder.add
+	permission message: {@p}No
+	trigger:
+		if arg-1 is set:
+			if {unlocked.%uuid of arg-1%} is set:
+				send " "
+				send "{@p}Player is already a builder"
+				send " "
+			else:
+				send " "
+				send "{@p}Added %arg-1%&7 to builder list"
+				send " "
+				set {unlocked.%uuid of arg-1%} to true
+				add arg-1 to {build::list::*}
+				send " " to arg-1
+				send "{@p}You were added to the Builder list" to arg-1
+				send " " to arg-1
+				
+				
+command bremove [<player>]:
+	permission: builder.remove
+	permission message: {@p}No
+	trigger:
+		if arg-1 is set:
+			if {unlocked.%uuid of arg-1%} is not set:
+				send " "
+				send "{@p}Player is not a builder"
+				send " "
+			else:
+				send " "
+				send "{@p}Removed %arg-1%&7 from the builder list"
+				send " "
+				delete {unlocked.%uuid of arg-1%}
+				send " " to arg-1
+				remove arg-1 from {build::list::*}
+				send "{@p}You were removed from the Builder list" to arg-1
+				send " " to arg-1
+				
+				
+command blist:
+	trigger:
+		menu(player,1)
+				
+				
+				
+

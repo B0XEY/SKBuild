@@ -1,0 +1,11 @@
+options:
+	p: &3&lHorizon &8| &7
+
+
+on right click on entity:
+	if name of event-entity is "&3&lCity":
+		send "{@p}Teleporting to the build world" to player
+		teleport player to {cityspawn}
+		wait 5 ticks
+		make player say "/roles"
+		

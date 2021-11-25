@@ -1,0 +1,68 @@
+options:
+	p: &3&lHorizon &8| &7
+	time: 1 minutes 30 seconds
+	world: minihub
+	
+
+every {@time} in world "world":
+	loop all players:
+		make loop-player say "/saveinventory"
+
+
+on world change:
+	clear player's inventory
+	send " " and "{@p}World Changed" and "&7Last Inventory Loaded!" and " " to player
+	make player say "/loadinventory"
+	if player is in world "minihub":
+		set player's gamemode to survival
+		loop 36 times:
+			set slot ({_count} - 1) of player's inventory to {setinv.%{_count}%}
+			add 1 to {_count}
+	
+command saveinventory:
+	trigger:
+		set {_w} to player's world
+		saveinventory(player, {_w})
+		
+		
+		
+command loadinventory:
+	trigger:
+		set {_w} to player's world
+		loadinventory(player, {_w})
+		
+		
+		
+function saveinventory(p: player, world: world):
+	send action bar "{@p}Inventory Saved" to {_p}
+	loop 36 times:
+		set {inv.%{_p}%.%{_count}%.%{_world}%} to slot ({_count} - 1) of {_p}'s inventory
+		add 1 to {_count}
+		
+		
+		
+function loadinventory(p: player, world: world):
+	loop 36 times:
+		set slot ({_count} - 1) of {_p}'s inventory to {inv.%{_p}%.%{_count}%.%{_world}%}
+		add 1 to {_count}
+		
+		
+		
+#HUB INVENTORY
+	
+		
+		
+command setinventory:
+	trigger:
+		loop 36 times:
+			set {setinv.%{_count}%} to slot ({_count} - 1) of player's inventory
+			add 1 to {_count}
+			
+			
+on inventory click:
+	if player is in world "{@world}":
+		if player has permission "inventory.edit":
+			stop
+		else:
+			cancel event
+		

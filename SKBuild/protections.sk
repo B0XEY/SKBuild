@@ -1,0 +1,18 @@
+options:
+	world: citymap
+	p: &3&lHorizon &8| &7
+	
+	tnt: false
+	spawning: true
+
+
+on spawn:
+	if world is "{@world}":
+		if {@spawning} is false:
+			cancel event
+			
+			
+On Explode:
+	if world is "{@world}":
+		if {@tnt} is false:
+			cancel event
